@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuite errors="0" failures="0" hostname="Huyens-MacBook-Air.local" name="LandscapeTest" skipped="0" tests="21" time="0.221" timestamp="2023-11-03T20:03:10">
+  <properties>
+    <property name="ant.project.invoked-targets" value="report" />
+    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment" />
+    <property name="java.vm.version" value="16.0.2+7-67" />
+    <property name="sun.boot.library.path" value="/Library/Java/JavaVirtualMachines/jdk-16.0.2.jdk/Contents/Home/lib" />
+    <property name="ant.library.dir" value="/Users/huyenphung/Documents/apache-ant-1.9.16/lib" />
+    <property name="ant.version" value="Apache Ant(TM) version 1.9.16 compiled on July 10 2021" />
+    <property name="ant.java.version" value="16" />
+    <property name="java.vm.vendor" value="Oracle Corporation" />
+    <property name="java.vendor.url" value="https://java.oracle.com/" />
+    <property name="path.separator" value=":" />
+    <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM" />
+    <property name="user.country" value="US" />
+    <property name="sun.java.launcher" value="SUN_STANDARD" />
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification" />
+    <property name="user.dir" value="/Users/huyenphung/Documents/geology" />
+    <property name="java.vm.compressedOopsMode" value="Zero based" />
+    <property name="java.runtime.version" value="16.0.2+7-67" />
+    <property name="basedir" value="/Users/huyenphung/Documents/geology" />
+    <property name="os.arch" value="x86_64" />
+    <property name="doc.dir" value="doc" />
+    <property name="java.io.tmpdir" value="/var/folders/fw/f3018xmn4d91q9730vjl_p_r0000gn/T/" />
+    <property name="ant.core.lib" value="/Users/huyenphung/Documents/apache-ant-1.9.16/lib/ant.jar" />
+    <property name="line.separator" value="&#xa;" />
+    <property name="java.vm.specification.vendor" value="Oracle Corporation" />
+    <property name="os.name" value="Mac OS X" />
+    <property name="ant.home" value="/Users/huyenphung/Documents/apache-ant-1.9.16" />
+    <property name="ant.file.type.geology" value="file" />
+    <property name="error.file" value="output/error.txt" />
+    <property name="build.dir" value="src" />
+    <property name="ant.project.name" value="geology" />
+    <property name="sun.jnu.encoding" value="UTF-8" />
+    <property name="_jacoco.agentFile" value="/var/folders/fw/f3018xmn4d91q9730vjl_p_r0000gn/T/jacocoagent15873189361804889464.jar" />
+    <property name="java.library.path" value="/Users/huyenphung/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:." />
+    <property name="jdk.debug" value="release" />
+    <property name="java.class.version" value="60.0" />
+    <property name="java.specification.name" value="Java Platform API Specification" />
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers" />
+    <property name="os.version" value="11.2" />
+    <property name="ant.file" value="/Users/huyenphung/Documents/geology/build.xml" />
+    <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16" />
+    <property name="user.home" value="/Users/huyenphung" />
+    <property name="file.encoding" value="UTF-8" />
+    <property name="java.specification.version" value="16" />
+    <property name="user.name" value="huyenphung" />
+    <property name="jacoco.file" value="report/jacoco/jacoco.exec" />
+    <property name="java.class.path" value="/Users/huyenphung/Documents/apache-ant-1.9.16/lib/hamcrest-2.2.jar:/Users/huyenphung/Documents/geology/src:/Users/huyenphung/Documents/apache-ant-1.9.16/lib/junit-4.13.jar:/Users/huyenphung/Documents/apache-ant-1.9.16/lib/ant-launcher.jar:/Users/huyenphung/Documents/apache-ant-1.9.16/lib/ant.jar:/Users/huyenphung/Documents/apache-ant-1.9.16/lib/ant-junit.jar:/Users/huyenphung/Documents/apache-ant-1.9.16/lib/ant-junit4.jar" />
+    <property name="report.dir" value="report" />
+    <property name="java.vm.specification.version" value="16" />
+    <property name="sun.arch.data.model" value="64" />
+    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner LandscapeTest skipNonTests=false filtertrace=false haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.OutErrSummaryJUnitResultFormatter showoutput=false outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/Users/huyenphung/Documents/geology/report/junit/TEST-LandscapeTest.xml crashfile=/Users/huyenphung/Documents/geology/junitvmwatcher3253591606896349655.properties propsfile=/Users/huyenphung/Documents/geology/junit3975923383338825861.properties" />
+    <property name="java.home" value="/Library/Java/JavaVirtualMachines/jdk-16.0.2.jdk/Contents/Home" />
+    <property name="output.dir" value="output" />
+    <property name="user.language" value="en" />
+    <property name="java.specification.vendor" value="Oracle Corporation" />
+    <property name="java.vm.info" value="mixed mode, sharing" />
+    <property name="java.version" value="16.0.2" />
+    <property name="ant.file.geology" value="/Users/huyenphung/Documents/geology/build.xml" />
+    <property name="java.vendor" value="Oracle Corporation" />
+    <property name="file.separator" value="/" />
+    <property name="junit.dir" value="report/junit" />
+    <property name="java.version.date" value="2021-07-20" />
+    <property name="src.dir" value="src" />
+    <property name="java.vendor.url.bug" value="https://bugreport.java.com/bugreport/" />
+    <property name="sun.io.unicode.encoding" value="UnicodeBig" />
+    <property name="sun.cpu.endian" value="little" />
+    <property name="jacoco.dir" value="report/jacoco" />
+    <property name="output.file" value="output/output.txt" />
+    <property name="ant.file.type" value="file" />
+    <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16" />
+    <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16" />
+  </properties>
+  <testcase classname="LandscapeTest" name="testModifyInvalidBoundary" time="0.069" />
+  <testcase classname="LandscapeTest" name="testRaiseDepressVerify" time="0.003" />
+  <testcase classname="LandscapeTest" name="testRaiseHillEven" time="0.0" />
+  <testcase classname="LandscapeTest" name="testCreateHillEven" time="0.0" />
+  <testcase classname="LandscapeTest" name="testModifyRaise" time="0.0" />
+  <testcase classname="LandscapeTest" name="testModifyDepress" time="0.0" />
+  <testcase classname="LandscapeTest" name="testGet" time="0.001" />
+  <testcase classname="LandscapeTest" name="testDepressHillEven" time="0.0" />
+  <testcase classname="LandscapeTest" name="testCreateValleyEven" time="0.0" />
+  <testcase classname="LandscapeTest" name="testVerifyNullModifications" time="0.002" />
+  <testcase classname="LandscapeTest" name="testVerifyNullHeight" time="0.002" />
+  <testcase classname="LandscapeTest" name="testDepressHillOdd" time="0.001" />
+  <testcase classname="LandscapeTest" name="testVerifyHeightsWithNull" time="0.002" />
+  <testcase classname="LandscapeTest" name="testModifyHill" time="0.0" />
+  <testcase classname="LandscapeTest" name="testCreateHillOdd" time="0.0" />
+  <testcase classname="LandscapeTest" name="testVerifyEmptyHeights" time="0.002" />
+  <testcase classname="LandscapeTest" name="testModificationRecord" time="0.0" />
+  <testcase classname="LandscapeTest" name="testModifyValley" time="0.0" />
+  <testcase classname="LandscapeTest" name="testModifyUnsupportOperation" time="0.002" />
+  <testcase classname="LandscapeTest" name="testCreateValleyOdd" time="0.001" />
+  <testcase classname="LandscapeTest" name="testRaiseHillOdd" time="0.001" />
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[Nov 03, 2023 4:03:10 PM Landscape lambda$modify$1
+WARNING: x1 cannot be greater than x2; returning early
+Nov 03, 2023 4:03:10 PM Landscape verify
+WARNING: Modification is null
+Nov 03, 2023 4:03:10 PM Landscape verify
+WARNING: Heights is null
+Nov 03, 2023 4:03:10 PM Landscape lambda$modify$2
+WARNING: Unsupported Operation
+]]></system-err>
+</testsuite>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Landscape.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">geology</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">Landscape.java</span></div><h1>Landscape.java</h1><pre class="source lang-java linenums">import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.IntStream;
+
+public class Landscape {
+
+<span class="fc" id="L9">    public enum Operation { RAISE, DEPRESS, HILL, VALLEY, UNSUPPORT}</span>
+
+<span class="fc" id="L11">    public record Modification(int x1, int x2, Operation operation) {}</span>
+
+    /** Bug 1: Modification -&gt; Landscape */
+<span class="fc" id="L14">    private static final Logger logger = Logger.getLogger(Landscape.class.getName());</span>
+<span class="fc" id="L15">    private final Map&lt;Integer, Integer&gt; landscape = new HashMap&lt;&gt;();</span>
+
+    private Map&lt;Integer, Integer&gt; get() {
+<span class="fc" id="L18">        return landscape;</span>
+    }
+
+    /** Bug 2: Switch case have no break. =4 complexity, max complexity so using EnumMap to lower complexity. */
+<span class="fc" id="L22">    private final Map&lt;Operation, BiConsumer&lt;Integer, Integer&gt;&gt; opHandler = new EnumMap&lt;&gt;(Operation.class);</span>
+
+<span class="fc" id="L24">    public Landscape() {</span>
+<span class="fc" id="L25">        opHandler.put(Operation.RAISE, this::raiseHill);</span>
+<span class="fc" id="L26">        opHandler.put(Operation.DEPRESS, this::depressHill);</span>
+<span class="fc" id="L27">        opHandler.put(Operation.HILL, this::createHill);</span>
+<span class="fc" id="L28">        opHandler.put(Operation.VALLEY, this::createValley);</span>
+<span class="fc" id="L29">    }</span>
+
+    public void modify(int x1, int x2, Operation operation) {
+<span class="fc" id="L32">        Objects.requireNonNull(x1, &quot;Null found in modify()&quot;);</span>
+<span class="fc" id="L33">        Objects.requireNonNull(x2, &quot;Null found in modify()&quot;);</span>
+<span class="fc" id="L34">        Objects.requireNonNull(operation, &quot;Null found in modify()&quot;);</span>
+
+        /** Bug 3: !bool =&gt; bool */
+<span class="fc bfc" id="L37" title="All 2 branches covered.">        Optional.of(x1 &gt; x2).</span>
+<span class="fc" id="L38">                filter(bool -&gt; bool).</span>
+<span class="fc" id="L39">                ifPresent(bool -&gt; logger.log(Level.WARNING, &quot;x1 cannot be greater than x2; returning early&quot;));</span>
+
+<span class="fc" id="L41">        BiConsumer&lt;Integer, Integer&gt; warning = (num1, num2) -&gt; logger.log(Level.WARNING, &quot;Unsupported Operation&quot;);</span>
+<span class="fc" id="L42">        opHandler.getOrDefault(operation,warning).accept(x1, x2);</span>
+<span class="fc" id="L43">    }</span>
+
+    /** Bug 4: range -&gt; rangeClosed*/
+    private void raiseHill(int x1, int x2) {
+<span class="fc" id="L47">        IntStream.rangeClosed(x1, x2).</span>
+<span class="fc" id="L48">                forEach(height -&gt; landscape.put(height, landscape.getOrDefault(height, 0) + 1));</span>
+<span class="fc" id="L49">    }</span>
+
+    /** Bug 5: range -&gt; rangeClosed*/
+    private void depressHill(int x1, int x2) {
+<span class="fc" id="L53">        IntStream.rangeClosed(x1, x2).</span>
+<span class="fc" id="L54">                forEach(height -&gt; landscape.put(height, landscape.getOrDefault(height, 0) - 1));</span>
+<span class="fc" id="L55">    }</span>
+
+    private void createHill(int x1, int x2) {
+<span class="fc" id="L58">        int numPointsBetween = 0;</span>
+<span class="fc" id="L59">        int offset = 0;</span>
+
+        /** Bug 6: Need = to update if even */
+<span class="fc bfc" id="L62" title="All 2 branches covered.">        while (x2 - x1 &gt;= numPointsBetween) {</span>
+<span class="fc" id="L63">            landscape.put(x1 + offset, offset + 1);</span>
+<span class="fc" id="L64">            landscape.put(x2 - offset, offset + 1);</span>
+<span class="fc" id="L65">            offset++;</span>
+<span class="fc" id="L66">            numPointsBetween += 2;</span>
+        }
+<span class="fc" id="L68">    }</span>
+
+    private void createValley(int x1, int x2) {
+<span class="fc" id="L71">        int numPointsBetween = 0;</span>
+<span class="fc" id="L72">        int offset = 0;</span>
+
+        /** Bug 7: Need = to update if even */
+<span class="fc bfc" id="L75" title="All 2 branches covered.">        while (x2 - x1 &gt;= numPointsBetween) {</span>
+<span class="fc" id="L76">            landscape.put(x1 + offset, -offset - 1);</span>
+<span class="fc" id="L77">            landscape.put(x2 - offset, -offset - 1);</span>
+<span class="fc" id="L78">            offset++;</span>
+<span class="fc" id="L79">            numPointsBetween += 2;</span>
+        }
+<span class="fc" id="L81">    }</span>
+
+    public boolean verify(Collection&lt;Modification&gt; modifications, List&lt;Integer&gt; heights) {
+        try {
+<span class="fc" id="L85">            Objects.requireNonNull(modifications);</span>
+        }
+<span class="fc" id="L87">        catch (NullPointerException e) {</span>
+<span class="fc" id="L88">            logger.log(Level.WARNING, &quot;Modification is null&quot;);</span>
+<span class="fc" id="L89">            return false;</span>
+<span class="fc" id="L90">        }</span>
+
+        try {
+<span class="fc" id="L93">            Objects.requireNonNull(heights);</span>
+        }
+<span class="fc" id="L95">        catch (NullPointerException e) {</span>
+<span class="fc" id="L96">            logger.log(Level.WARNING, &quot;Heights is null&quot;);</span>
+<span class="fc" id="L97">            return false;</span>
+<span class="fc" id="L98">        }</span>
+
+        /** Bug 8: Previously, x2 was placed before x1 */
+<span class="fc" id="L101">        modifications.forEach(modification -&gt; {</span>
+<span class="fc" id="L102">            Optional.ofNullable(modification)</span>
+<span class="fc" id="L103">                    .ifPresentOrElse(modification1 -&gt;</span>
+<span class="fc" id="L104">                            modify(modification1.x1, modification1.x2, modification1.operation),</span>
+<span class="nc" id="L105">                            () -&gt; logger.log(Level.WARNING, &quot;modification is null, skipping&quot;));</span>
+<span class="fc" id="L106">        });</span>
+
+<span class="fc bfc" id="L108" title="All 2 branches covered.">        for (int i = 0; i &lt; heights.size(); i++) {</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">            if (!Objects.equals(get().get(i), heights.get(i)))</span>
+<span class="fc" id="L110">                return false;</span>
+        }
+
+<span class="fc" id="L113">        return true;</span>
+    }
+
+    /**
+     * Internal testing class for testing private methods.
+     * You can assume there are no errors here.
+     */
+<span class="fc" id="L120">    class TestHook {</span>
+        Map&lt;Integer, Integer&gt; get() {
+<span class="fc" id="L122">            return Landscape.this.get();</span>
+        }
+
+        /** Created private method raiseHill() */
+        void raiseHill(int x1, int x2) {
+<span class="fc" id="L127">            Landscape.this.raiseHill(x1, x2);</span>
+<span class="fc" id="L128">        }</span>
+
+        /** Created private method depressHill() */
+        void depressHill(int x1, int x2) {
+<span class="fc" id="L132">            Landscape.this.depressHill(x1, x2);</span>
+<span class="fc" id="L133">        }</span>
+
+        void createHill(int x1, int x2) {
+<span class="fc" id="L136">            Landscape.this.createHill(x1, x2);</span>
+<span class="fc" id="L137">        }</span>
+
+        void createValley(int x1, int x2) {
+<span class="fc" id="L140">            Landscape.this.createValley(x1, x2);</span>
+<span class="fc" id="L141">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

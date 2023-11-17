@@ -1,0 +1,127 @@
+1a2
+> import java.util.function.BiConsumer;
+8c9
+<     public enum Operation { RAISE, DEPRESS, HILL, VALLEY }
+---
+>     public enum Operation { RAISE, DEPRESS, HILL, VALLEY, UNSUPPORT}
+12c13,14
+<     private static final Logger logger = Logger.getLogger(Modification.class.getName());
+---
+>     /** Bug 1: Modification -> Landscape */
+>     private static final Logger logger = Logger.getLogger(Landscape.class.getName());
+18a21,30
+>     /** Bug 2: Switch case have no break. =4 complexity, max complexity so using EnumMap to lower complexity. */
+>     private final Map<Operation, BiConsumer<Integer, Integer>> opHandler = new EnumMap<>(Operation.class);
+> 
+>     public Landscape() {
+>         opHandler.put(Operation.RAISE, this::raiseHill);
+>         opHandler.put(Operation.DEPRESS, this::depressHill);
+>         opHandler.put(Operation.HILL, this::createHill);
+>         opHandler.put(Operation.VALLEY, this::createValley);
+>     }
+> 
+20,22c32,34
+<         Optional.of(x1 > x2)
+<                 .filter(bool -> !bool)
+<                 .ifPresent(bool -> logger.log(Level.WARNING, "x1 cannot be greater than x2; returning early"));
+---
+>         Objects.requireNonNull(x1, "Null found in modify()");
+>         Objects.requireNonNull(x2, "Null found in modify()");
+>         Objects.requireNonNull(operation, "Null found in modify()");
+24,39c36,42
+<         switch (operation) {
+<             case RAISE:
+<                 IntStream.range(x1, x2).forEach(num -> {
+<                     landscape.put(num, landscape.getOrDefault(num, 0) + 1);
+<                 });
+<             case DEPRESS:
+<                 IntStream.range(x1, x2).forEach(num -> {
+<                     landscape.put(num, landscape.getOrDefault(num, 0) - 1);
+<                 });
+<             case HILL:
+<                 createHill(x1, x2);
+<             case VALLEY:
+<                 createValley(x1, x2);
+<             default:
+<                 logger.log(Level.WARNING, "unsupported Operation");
+<         }
+---
+>         /** Bug 3: !bool => bool */
+>         Optional.of(x1 > x2).
+>                 filter(bool -> bool).
+>                 ifPresent(bool -> logger.log(Level.WARNING, "x1 cannot be greater than x2; returning early"));
+> 
+>         BiConsumer<Integer, Integer> warning = (num1, num2) -> logger.log(Level.WARNING, "Unsupported Operation");
+>         opHandler.getOrDefault(operation,warning).accept(x1, x2);
+41a45,56
+>     /** Bug 4: range -> rangeClosed*/
+>     private void raiseHill(int x1, int x2) {
+>         IntStream.rangeClosed(x1, x2).
+>                 forEach(height -> landscape.put(height, landscape.getOrDefault(height, 0) + 1));
+>     }
+> 
+>     /** Bug 5: range -> rangeClosed*/
+>     private void depressHill(int x1, int x2) {
+>         IntStream.rangeClosed(x1, x2).
+>                 forEach(height -> landscape.put(height, landscape.getOrDefault(height, 0) - 1));
+>     }
+> 
+46c61,62
+<         while (x2 - x1 > numPointsBetween) {
+---
+>         /** Bug 6: Need = to update if even */
+>         while (x2 - x1 >= numPointsBetween) {
+48,54c64
+<             numPointsBetween++;
+< 
+<             if (x1 + offset != x2 - offset) {
+<                 landscape.put(x2 - offset, offset + 1);
+<                 numPointsBetween++;
+<             }
+< 
+---
+>             landscape.put(x2 - offset, offset + 1);
+55a66
+>             numPointsBetween += 2;
+63c74,75
+<         while (x2 - x1 > numPointsBetween) {
+---
+>         /** Bug 7: Need = to update if even */
+>         while (x2 - x1 >= numPointsBetween) {
+65,71c77
+<             numPointsBetween++;
+< 
+<             if (x1 + offset != x2 - offset) {
+<                 landscape.put(x2 - offset, -offset - 1);
+<                 numPointsBetween++;
+<             }
+< 
+---
+>             landscape.put(x2 - offset, -offset - 1);
+72a79
+>             numPointsBetween += 2;
+81c88
+<             logger.log(Level.WARNING, "modifications is null");
+---
+>             logger.log(Level.WARNING, "Modification is null");
+89c96
+<             logger.log(Level.WARNING, "heights is null");
+---
+>             logger.log(Level.WARNING, "Heights is null");
+92a100
+>         /** Bug 8: Previously, x2 was placed before x1 */
+96c104
+<                             modify(modification1.x2, modification1.x1, modification1.operation),
+---
+>                             modify(modification1.x1, modification1.x2, modification1.operation),
+114a123,132
+>         }
+> 
+>         /** Created private method raiseHill() */
+>         void raiseHill(int x1, int x2) {
+>             Landscape.this.raiseHill(x1, x2);
+>         }
+> 
+>         /** Created private method depressHill() */
+>         void depressHill(int x1, int x2) {
+>             Landscape.this.depressHill(x1, x2);

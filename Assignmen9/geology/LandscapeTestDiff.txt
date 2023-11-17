@@ -1,0 +1,192 @@
+25a26
+>     /** modify() */
+35a37,93
+>     public void testModifyRaise() {
+>         Landscape landscape = new Landscape();
+>         landscape.modify(0, 4, Landscape.Operation.RAISE);
+>         List<Integer> heights = List.of(1, 1, 1, 1);
+>         assertTrue(landscape.verify(List.of(), heights));
+>     }
+> 
+>     @Test
+>     public void testModifyDepress() {
+>         Landscape landscape = new Landscape();
+>         landscape.modify(0, 4, Landscape.Operation.DEPRESS);
+>         List<Integer> heights = List.of(-1, -1, -1, -1);
+>         assertTrue(landscape.verify(List.of(), heights));
+>     }
+> 
+>     @Test
+>     public void testModifyHill() {
+>         Landscape landscape = new Landscape();
+>         Landscape.Modification modification = new Landscape.Modification(0, 4, Landscape.Operation.HILL);
+>         List<Integer> heights = List.of(1, 2, 3, 2, 1);
+>         assertTrue(landscape.verify(List.of(modification), heights));
+>     }
+> 
+>     @Test
+>     public void testModifyValley() {
+>         Landscape landscape = new Landscape();
+>         Landscape.Modification modification = new Landscape.Modification(0, 4, Landscape.Operation.VALLEY);
+>         List<Integer> heights = List.of(-1, -2, -3, -2, -1);
+>         assertTrue(landscape.verify(List.of(modification), heights));
+>     }
+> 
+>     @Test
+>     public void testModifyInvalidBoundary() {
+>         handler.clearLogRecords();
+> 
+>         Landscape landscape = new Landscape();
+>         Landscape.TestHook testHook = landscape.new TestHook();
+>         landscape.modify(0, -1, Landscape.Operation.RAISE);
+> 
+>         assertEquals("x1 cannot be greater than x2; returning early", handler.getLastLog().orElse(""));
+>         assertEquals(0, testHook.get().size());
+>     }
+> 
+>     @Test
+>     public void testModifyUnsupportOperation() {
+>         Landscape landscape = new Landscape();
+>         Landscape.Modification modification = new Landscape.Modification(0, 4, Landscape.Operation.UNSUPPORT);
+>         Landscape.TestHook testHook = landscape.new TestHook();
+>         List<Integer> heights = List.of(1, 1, 1, 1, 1);
+>         assertFalse(landscape.verify(List.of(modification), heights));
+>         assertNull(testHook.get().get(0));
+>         assertNull(testHook.get().get(4));
+>         assertEquals("Unsupported Operation", handler.getLastLog().orElse(""));
+>     }
+> 
+>     /** get() */
+>     @Test
+42a101
+>     /** raiseHill() */
+43a103,183
+>     public void testRaiseHillEven() {
+>         Landscape landscape = new Landscape();
+>         Landscape.TestHook testHook = landscape.new TestHook();
+>         landscape.modify(0,3, Landscape.Operation.RAISE);
+>         Map<Integer, Integer> mapAfterCallingModify = testHook.get();
+>         landscape = new Landscape();
+>         testHook = landscape.new TestHook();
+>         testHook.raiseHill(0,3);
+>         Map<Integer, Integer> mapAfterCallingRaiseHill = testHook.get();
+>         assertEquals(mapAfterCallingRaiseHill, mapAfterCallingModify);
+>     }
+> 
+>     @Test
+>     public void testRaiseHillOdd() {
+>         Landscape landscape = new Landscape();
+>         Landscape.TestHook testHook = landscape.new TestHook();
+>         landscape.modify(0,2, Landscape.Operation.RAISE);
+>         Map<Integer, Integer> mapAfterCallingModify = testHook.get();
+>         landscape = new Landscape();
+>         testHook = landscape.new TestHook();
+>         testHook.raiseHill(0,2);
+>         Map<Integer, Integer> mapAfterCallingRaiseHill = testHook.get();
+>         assertEquals(mapAfterCallingRaiseHill, mapAfterCallingModify);
+>     }
+> 
+>     /** depressHill() */
+>     @Test
+>     public void testDepressHillEven() {
+>         Landscape landscape = new Landscape();
+>         Landscape.TestHook testHook = landscape.new TestHook();
+>         landscape.modify(0,3, Landscape.Operation.DEPRESS);
+>         Map<Integer, Integer> mapAfterCallingModify = testHook.get();
+>         landscape = new Landscape();
+>         testHook = landscape.new TestHook();
+>         testHook.depressHill(0,3);
+>         Map<Integer, Integer> mapAfterCallingDepressHill = testHook.get();
+>         assertEquals(mapAfterCallingDepressHill, mapAfterCallingModify);
+>     }
+> 
+>     @Test
+>     public void testDepressHillOdd() {
+>         Landscape landscape = new Landscape();
+>         Landscape.TestHook testHook = landscape.new TestHook();
+>         landscape.modify(0,2, Landscape.Operation.DEPRESS);
+>         Map<Integer, Integer> mapAfterCallingModify = testHook.get();
+>         landscape = new Landscape();
+>         testHook = landscape.new TestHook();
+>         testHook.depressHill(0,2);
+>         Map<Integer, Integer> mapAfterCallingDepressHill = testHook.get();
+>         assertEquals(mapAfterCallingDepressHill, mapAfterCallingModify);
+>     }
+> 
+>     /** createHill() */
+>     @Test
+>     public void testCreateHillEven() {
+>         Landscape landscape = new Landscape();
+>         Landscape.TestHook testHook = landscape.new TestHook();
+>         landscape.modify(0,3, Landscape.Operation.HILL);
+>         Map<Integer, Integer> mapAfterCallingModify = testHook.get();
+>         landscape = new Landscape();
+>         testHook = landscape.new TestHook();
+>         testHook.createHill(0,3);
+>         Map<Integer, Integer> mapAfterCallingCreateHill = testHook.get();
+>         assertEquals(mapAfterCallingCreateHill, mapAfterCallingModify);
+>     }
+> 
+>     @Test
+>     public void testCreateHillOdd() {
+>         Landscape landscape = new Landscape();
+>         Landscape.TestHook testHook = landscape.new TestHook();
+>         landscape.modify(0,2, Landscape.Operation.HILL);
+>         Map<Integer, Integer> mapAfterCallingModify = testHook.get();
+>         landscape = new Landscape();
+>         testHook = landscape.new TestHook();
+>         testHook.createHill(0,2);
+>         Map<Integer, Integer> mapAfterCallingCreateHill = testHook.get();
+>         assertEquals(mapAfterCallingCreateHill, mapAfterCallingModify);
+>     }
+> 
+>     /** createValley() */
+>     @Test
+58a199,203
+>     @Test
+>     public void testCreateValleyOdd() {
+>         Landscape landscape = new Landscape();
+>         Landscape.TestHook testHook = landscape.new TestHook();
+>         landscape.modify(0, 2, Landscape.Operation.VALLEY);
+59a205,216
+>         Map<Integer, Integer> mapAfterCallingModify = testHook.get();
+> 
+>         landscape = new Landscape();
+>         testHook = landscape.new TestHook();
+>         testHook.createValley(0, 2);
+> 
+>         Map<Integer, Integer> mapAfterCallingCreateValley = testHook.get();
+> 
+>         assertEquals(mapAfterCallingModify, mapAfterCallingCreateValley);
+>     }
+> 
+>     /** verify() */
+63d219
+< 
+67a224,231
+>     public void testVerifyNullHeight() {
+>         Landscape landscape = new Landscape();
+>         Landscape.Modification modification = new Landscape.Modification(0, 3, Landscape.Operation.VALLEY);
+> 
+>         assertFalse(landscape.verify(List.of(modification), null));
+>     }
+> 
+>     @Test
+80a245,261
+>     }
+> 
+>     @Test
+>     public void testRaiseDepressVerify() {
+>         Landscape landscape = new Landscape();
+>         Landscape.TestHook testHook = landscape.new TestHook();
+> 
+>         landscape.modify(0, 4, Landscape.Operation.RAISE);
+>         landscape.modify(2, 3, Landscape.Operation.DEPRESS);
+> 
+>         assertEquals(1, testHook.get().get(0).intValue());
+>         assertEquals(1, testHook.get().get(1).intValue());
+>         assertEquals(0, testHook.get().get(2).intValue());
+>         assertEquals(0, testHook.get().get(3).intValue());
+>         assertEquals(1, testHook.get().get(4).intValue());
+>         List<Integer> heights = List.of(1, 1, 0, 0, 1);
+>         assertTrue(landscape.verify(List.of(), heights));

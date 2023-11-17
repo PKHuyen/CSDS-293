@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LandscapeTest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">geology</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">LandscapeTest.java</span></div><h1>LandscapeTest.java</h1><pre class="source lang-java linenums">import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
+/**
+ * Tests Landscape class.
+ * You can assume there are no errors here.
+ * All the tests are not provided here; you will have to add them yourself.
+ */
+<span class="fc" id="L17">public class LandscapeTest {</span>
+<span class="fc" id="L18">    private final Logger logger = Logger.getLogger(Landscape.class.getName());</span>
+<span class="fc" id="L19">    private final LoggerTestingHandler handler = new LoggerTestingHandler();</span>
+
+    @Before
+    public void setup() {
+<span class="fc" id="L23">        logger.addHandler(handler);</span>
+<span class="fc" id="L24">    }</span>
+
+    /** modify() */
+    @Test
+    public void testModificationRecord() {
+<span class="fc" id="L29">        Landscape.Modification record = new Landscape.Modification(0, 4, Landscape.Operation.RAISE);</span>
+
+<span class="fc" id="L31">        assertEquals(0, record.x1());</span>
+<span class="fc" id="L32">        assertEquals(4, record.x2());</span>
+<span class="fc" id="L33">        assertEquals(Landscape.Operation.RAISE, record.operation());</span>
+<span class="fc" id="L34">    }</span>
+
+    @Test
+    public void testModifyRaise() {
+<span class="fc" id="L38">        Landscape landscape = new Landscape();</span>
+<span class="fc" id="L39">        landscape.modify(0, 4, Landscape.Operation.RAISE);</span>
+<span class="fc" id="L40">        List&lt;Integer&gt; heights = List.of(1, 1, 1, 1);</span>
+<span class="fc" id="L41">        assertTrue(landscape.verify(List.of(), heights));</span>
+<span class="fc" id="L42">    }</span>
+
+    @Test
+    public void testModifyDepress() {
+<span class="fc" id="L46">        Landscape landscape = new Landscape();</span>
+<span class="fc" id="L47">        landscape.modify(0, 4, Landscape.Operation.DEPRESS);</span>
+<span class="fc" id="L48">        List&lt;Integer&gt; heights = List.of(-1, -1, -1, -1);</span>
+<span class="fc" id="L49">        assertTrue(landscape.verify(List.of(), heights));</span>
+<span class="fc" id="L50">    }</span>
+
+    @Test
+    public void testModifyHill() {
+<span class="fc" id="L54">        Landscape landscape = new Landscape();</span>
+<span class="fc" id="L55">        Landscape.Modification modification = new Landscape.Modification(0, 4, Landscape.Operation.HILL);</span>
+<span class="fc" id="L56">        List&lt;Integer&gt; heights = List.of(1, 2, 3, 2, 1);</span>
+<span class="fc" id="L57">        assertTrue(landscape.verify(List.of(modification), heights));</span>
+<span class="fc" id="L58">    }</span>
+
+    @Test
+    public void testModifyValley() {
+<span class="fc" id="L62">        Landscape landscape = new Landscape();</span>
+<span class="fc" id="L63">        Landscape.Modification modification = new Landscape.Modification(0, 4, Landscape.Operation.VALLEY);</span>
+<span class="fc" id="L64">        List&lt;Integer&gt; heights = List.of(-1, -2, -3, -2, -1);</span>
+<span class="fc" id="L65">        assertTrue(landscape.verify(List.of(modification), heights));</span>
+<span class="fc" id="L66">    }</span>
+
+    @Test
+    public void testModifyInvalidBoundary() {
+<span class="fc" id="L70">        handler.clearLogRecords();</span>
+
+<span class="fc" id="L72">        Landscape landscape = new Landscape();</span>
+<span class="fc" id="L73">        Landscape.TestHook testHook = landscape.new TestHook();</span>
+<span class="fc" id="L74">        landscape.modify(0, -1, Landscape.Operation.RAISE);</span>
+
+<span class="fc" id="L76">        assertEquals(&quot;x1 cannot be greater than x2; returning early&quot;, handler.getLastLog().orElse(&quot;&quot;));</span>
+<span class="fc" id="L77">        assertEquals(0, testHook.get().size());</span>
+<span class="fc" id="L78">    }</span>
+
+    @Test
+    public void testModifyUnsupportOperation() {
+<span class="fc" id="L82">        Landscape landscape = new Landscape();</span>
+<span class="fc" id="L83">        Landscape.Modification modification = new Landscape.Modification(0, 4, Landscape.Operation.UNSUPPORT);</span>
+<span class="fc" id="L84">        Landscape.TestHook testHook = landscape.new TestHook();</span>
+<span class="fc" id="L85">        List&lt;Integer&gt; heights = List.of(1, 1, 1, 1, 1);</span>
+<span class="fc" id="L86">        assertFalse(landscape.verify(List.of(modification), heights));</span>
+<span class="fc" id="L87">        assertNull(testHook.get().get(0));</span>
+<span class="fc" id="L88">        assertNull(testHook.get().get(4));</span>
+<span class="fc" id="L89">        assertEquals(&quot;Unsupported Operation&quot;, handler.getLastLog().orElse(&quot;&quot;));</span>
+<span class="fc" id="L90">    }</span>
+
+    /** get() */
+    @Test
+    public void testGet() {
+<span class="fc" id="L95">        Landscape landscape = new Landscape();</span>
+<span class="fc" id="L96">        Landscape.TestHook testHook = landscape.new TestHook();</span>
+
+<span class="fc" id="L98">        assertEquals(0, testHook.get().size());</span>
+<span class="fc" id="L99">    }</span>
+
+    /** raiseHill() */
+    @Test
+    public void testRaiseHillEven() {
+<span class="fc" id="L104">        Landscape landscape = new Landscape();</span>
+<span class="fc" id="L105">        Landscape.TestHook testHook = landscape.new TestHook();</span>
+<span class="fc" id="L106">        landscape.modify(0,3, Landscape.Operation.RAISE);</span>
+<span class="fc" id="L107">        Map&lt;Integer, Integer&gt; mapAfterCallingModify = testHook.get();</span>
+<span class="fc" id="L108">        landscape = new Landscape();</span>
+<span class="fc" id="L109">        testHook = landscape.new TestHook();</span>
+<span class="fc" id="L110">        testHook.raiseHill(0,3);</span>
+<span class="fc" id="L111">        Map&lt;Integer, Integer&gt; mapAfterCallingRaiseHill = testHook.get();</span>
+<span class="fc" id="L112">        assertEquals(mapAfterCallingRaiseHill, mapAfterCallingModify);</span>
+<span class="fc" id="L113">    }</span>
+
+    @Test
+    public void testRaiseHillOdd() {
+<span class="fc" id="L117">        Landscape landscape = new Landscape();</span>
+<span class="fc" id="L118">        Landscape.TestHook testHook = landscape.new TestHook();</span>
+<span class="fc" id="L119">        landscape.modify(0,2, Landscape.Operation.RAISE);</span>
+<span class="fc" id="L120">        Map&lt;Integer, Integer&gt; mapAfterCallingModify = testHook.get();</span>
+<span class="fc" id="L121">        landscape = new Landscape();</span>
+<span class="fc" id="L122">        testHook = landscape.new TestHook();</span>
+<span class="fc" id="L123">        testHook.raiseHill(0,2);</span>
+<span class="fc" id="L124">        Map&lt;Integer, Integer&gt; mapAfterCallingRaiseHill = testHook.get();</span>
+<span class="fc" id="L125">        assertEquals(mapAfterCallingRaiseHill, mapAfterCallingModify);</span>
+<span class="fc" id="L126">    }</span>
+
+    /** depressHill() */
+    @Test
+    public void testDepressHillEven() {
+<span class="fc" id="L131">        Landscape landscape = new Landscape();</span>
+<span class="fc" id="L132">        Landscape.TestHook testHook = landscape.new TestHook();</span>
+<span class="fc" id="L133">        landscape.modify(0,3, Landscape.Operation.DEPRESS);</span>
+<span class="fc" id="L134">        Map&lt;Integer, Integer&gt; mapAfterCallingModify = testHook.get();</span>
+<span class="fc" id="L135">        landscape = new Landscape();</span>
+<span class="fc" id="L136">        testHook = landscape.new TestHook();</span>
+<span class="fc" id="L137">        testHook.depressHill(0,3);</span>
+<span class="fc" id="L138">        Map&lt;Integer, Integer&gt; mapAfterCallingDepressHill = testHook.get();</span>
+<span class="fc" id="L139">        assertEquals(mapAfterCallingDepressHill, mapAfterCallingModify);</span>
+<span class="fc" id="L140">    }</span>
+
+    @Test
+    public void testDepressHillOdd() {
+<span class="fc" id="L144">        Landscape landscape = new Landscape();</span>
+<span class="fc" id="L145">        Landscape.TestHook testHook = landscape.new TestHook();</span>
+<span class="fc" id="L146">        landscape.modify(0,2, Landscape.Operation.DEPRESS);</span>
+<span class="fc" id="L147">        Map&lt;Integer, Integer&gt; mapAfterCallingModify = testHook.get();</span>
+<span class="fc" id="L148">        landscape = new Landscape();</span>
+<span class="fc" id="L149">        testHook = landscape.new TestHook();</span>
+<span class="fc" id="L150">        testHook.depressHill(0,2);</span>
+<span class="fc" id="L151">        Map&lt;Integer, Integer&gt; mapAfterCallingDepressHill = testHook.get();</span>
+<span class="fc" id="L152">        assertEquals(mapAfterCallingDepressHill, mapAfterCallingModify);</span>
+<span class="fc" id="L153">    }</span>
+
+    /** createHill() */
+    @Test
+    public void testCreateHillEven() {
+<span class="fc" id="L158">        Landscape landscape = new Landscape();</span>
+<span class="fc" id="L159">        Landscape.TestHook testHook = landscape.new TestHook();</span>
+<span class="fc" id="L160">        landscape.modify(0,3, Landscape.Operation.HILL);</span>
+<span class="fc" id="L161">        Map&lt;Integer, Integer&gt; mapAfterCallingModify = testHook.get();</span>
+<span class="fc" id="L162">        landscape = new Landscape();</span>
+<span class="fc" id="L163">        testHook = landscape.new TestHook();</span>
+<span class="fc" id="L164">        testHook.createHill(0,3);</span>
+<span class="fc" id="L165">        Map&lt;Integer, Integer&gt; mapAfterCallingCreateHill = testHook.get();</span>
+<span class="fc" id="L166">        assertEquals(mapAfterCallingCreateHill, mapAfterCallingModify);</span>
+<span class="fc" id="L167">    }</span>
+
+    @Test
+    public void testCreateHillOdd() {
+<span class="fc" id="L171">        Landscape landscape = new Landscape();</span>
+<span class="fc" id="L172">        Landscape.TestHook testHook = landscape.new TestHook();</span>
+<span class="fc" id="L173">        landscape.modify(0,2, Landscape.Operation.HILL);</span>
+<span class="fc" id="L174">        Map&lt;Integer, Integer&gt; mapAfterCallingModify = testHook.get();</span>
+<span class="fc" id="L175">        landscape = new Landscape();</span>
+<span class="fc" id="L176">        testHook = landscape.new TestHook();</span>
+<span class="fc" id="L177">        testHook.createHill(0,2);</span>
+<span class="fc" id="L178">        Map&lt;Integer, Integer&gt; mapAfterCallingCreateHill = testHook.get();</span>
+<span class="fc" id="L179">        assertEquals(mapAfterCallingCreateHill, mapAfterCallingModify);</span>
+<span class="fc" id="L180">    }</span>
+
+    /** createValley() */
+    @Test
+    public void testCreateValleyEven() {
+<span class="fc" id="L185">        Landscape landscape = new Landscape();</span>
+<span class="fc" id="L186">        Landscape.TestHook testHook = landscape.new TestHook();</span>
+<span class="fc" id="L187">        landscape.modify(0, 3, Landscape.Operation.VALLEY);</span>
+
+<span class="fc" id="L189">        Map&lt;Integer, Integer&gt; mapAfterCallingModify = testHook.get();</span>
+
+<span class="fc" id="L191">        landscape = new Landscape();</span>
+<span class="fc" id="L192">        testHook = landscape.new TestHook();</span>
+<span class="fc" id="L193">        testHook.createValley(0, 3);</span>
+
+<span class="fc" id="L195">        Map&lt;Integer, Integer&gt; mapAfterCallingCreateValley = testHook.get();</span>
+
+<span class="fc" id="L197">        assertEquals(mapAfterCallingModify, mapAfterCallingCreateValley);</span>
+<span class="fc" id="L198">    }</span>
+    @Test
+    public void testCreateValleyOdd() {
+<span class="fc" id="L201">        Landscape landscape = new Landscape();</span>
+<span class="fc" id="L202">        Landscape.TestHook testHook = landscape.new TestHook();</span>
+<span class="fc" id="L203">        landscape.modify(0, 2, Landscape.Operation.VALLEY);</span>
+
+<span class="fc" id="L205">        Map&lt;Integer, Integer&gt; mapAfterCallingModify = testHook.get();</span>
+
+<span class="fc" id="L207">        landscape = new Landscape();</span>
+<span class="fc" id="L208">        testHook = landscape.new TestHook();</span>
+<span class="fc" id="L209">        testHook.createValley(0, 2);</span>
+
+<span class="fc" id="L211">        Map&lt;Integer, Integer&gt; mapAfterCallingCreateValley = testHook.get();</span>
+
+<span class="fc" id="L213">        assertEquals(mapAfterCallingModify, mapAfterCallingCreateValley);</span>
+<span class="fc" id="L214">    }</span>
+
+    /** verify() */
+    @Test
+    public void testVerifyNullModifications() {
+<span class="fc" id="L219">        Landscape landscape = new Landscape();</span>
+<span class="fc" id="L220">        assertFalse(landscape.verify(null, List.of(0, 0, 0, 0, 0)));</span>
+<span class="fc" id="L221">    }</span>
+
+    @Test
+    public void testVerifyNullHeight() {
+<span class="fc" id="L225">        Landscape landscape = new Landscape();</span>
+<span class="fc" id="L226">        Landscape.Modification modification = new Landscape.Modification(0, 3, Landscape.Operation.VALLEY);</span>
+
+<span class="fc" id="L228">        assertFalse(landscape.verify(List.of(modification), null));</span>
+<span class="fc" id="L229">    }</span>
+
+    @Test
+    public void testVerifyEmptyHeights() {
+<span class="fc" id="L233">        Landscape landscape = new Landscape();</span>
+<span class="fc" id="L234">        Landscape.Modification modification = new Landscape.Modification(0, 3, Landscape.Operation.VALLEY);</span>
+
+<span class="fc" id="L236">        assertTrue(landscape.verify(List.of(modification), List.of()));</span>
+<span class="fc" id="L237">    }</span>
+
+    @Test
+    public void testVerifyHeightsWithNull() {
+<span class="fc" id="L241">        Landscape landscape = new Landscape();</span>
+<span class="fc" id="L242">        Landscape.Modification modification = new Landscape.Modification(0, 3, Landscape.Operation.VALLEY);</span>
+
+<span class="fc" id="L244">        assertFalse(landscape.verify(List.of(modification), Arrays.asList(0, 0, null, 0)));</span>
+<span class="fc" id="L245">    }</span>
+
+    @Test
+    public void testRaiseDepressVerify() {
+<span class="fc" id="L249">        Landscape landscape = new Landscape();</span>
+<span class="fc" id="L250">        Landscape.TestHook testHook = landscape.new TestHook();</span>
+
+<span class="fc" id="L252">        landscape.modify(0, 4, Landscape.Operation.RAISE);</span>
+<span class="fc" id="L253">        landscape.modify(2, 3, Landscape.Operation.DEPRESS);</span>
+
+<span class="fc" id="L255">        assertEquals(1, testHook.get().get(0).intValue());</span>
+<span class="fc" id="L256">        assertEquals(1, testHook.get().get(1).intValue());</span>
+<span class="fc" id="L257">        assertEquals(0, testHook.get().get(2).intValue());</span>
+<span class="fc" id="L258">        assertEquals(0, testHook.get().get(3).intValue());</span>
+<span class="fc" id="L259">        assertEquals(1, testHook.get().get(4).intValue());</span>
+<span class="fc" id="L260">        List&lt;Integer&gt; heights = List.of(1, 1, 0, 0, 1);</span>
+<span class="fc" id="L261">        assertTrue(landscape.verify(List.of(), heights));</span>
+<span class="fc" id="L262">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
